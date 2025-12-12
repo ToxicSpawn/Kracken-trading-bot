@@ -1,17 +1,38 @@
 agents:
+
+  # =========================
+  # DATA & GOVERNANCE
+  # =========================
+
   market_data: true
-  short_term: true
-  mid_term: true
-  long_term: true
-  risk: true
-  execution: true
-  portfolio: true
-  meta_controller: true
-  ml: true        # MLAgent (from v9000)
-  hedge: true     # NEW HedgeAgent (v12000)
-  router: true
-  reasoning_layer: true          # NEW
-  market_selection: true         # NEW
-  research: true
   multi_venue_book: true
-  arbitrage: true
+  risk: true
+  portfolio: true
+  router: true
+  market_selection: true
+  reasoning_layer: true
+  meta_controller: true
+  research: true
+
+  # =========================
+  # INTENT-ONLY EXECUTION
+  # =========================
+
+  execution_intent: true
+  hedge_intent: false
+  arbitrage_intent: false
+
+  # =========================
+  # HARD-DISABLED (LEGACY)
+  # =========================
+  # These MUST stay false.
+  # Runtime will refuse to start if any are enabled.
+
+  short_term: false
+  mid_term: false
+  long_term: false
+  ml: false
+
+  execution: false
+  hedge: false
+  arbitrage: false

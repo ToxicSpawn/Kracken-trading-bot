@@ -44,6 +44,8 @@ except ImportError:
     ReconcileConfig = None
 
 from core.intent_netting import net_intents, NettingConfig
+from core.eligibility import evaluate_trade_eligibility, EligibilityConfig
+from core.capital_allocator import allocate_risk_multiplier
 
 
 logger = logging.getLogger(__name__)
@@ -178,6 +180,17 @@ class MultiAgentRuntime:
             for intent in net_intents(intents, self._net_cfg):
                 if getattr(self.state, "system_mode", "NORMAL") == "MANAGE_ONLY" and intent.get("exposure_delta", 0.0) > 0:
                     continue
+
+                # Level-15: Trade eligibility gate
+                elig = evaluate_trade_eligibility(self.state, intent, EligibilityConfig())
+                if not elig.allow:
+                    continue
+                intent["qty"] = float(intent.get("qty", 0.0)) * float(elig.multiplier)
+
+                # Level-15: Capital allocation layer
+                alloc = allocate_risk_multiplier(self.state, intent)
+                intent["qty"] = float(intent.get("qty", 0.0)) * float(alloc.multiplier)
+                intent.setdefault("meta", {})["allocation_reason"] = alloc.reason
 
                 if self.risk_governor:
                     decision = self.risk_governor.evaluate(intent)
