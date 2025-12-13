@@ -6,6 +6,7 @@ import yaml
 
 from core.state import GlobalState
 from core.policy import PolicyEngine
+from core.allocator import compute_risk_multiplier, AllocatorConfig
 from agents.base import Agent, AgentContext
 from agents.market_data import MarketDataAgent
 from agents.short_term_agent import ShortTermAgent
@@ -35,6 +36,7 @@ class MultiAgentRuntime:
         self.policy = policy
         self.agents: List[Agent] = []
         self._tasks: List[asyncio.Task] = []
+        self._stop = False
 
     async def start(self) -> None:
         ctx = AgentContext(state=self.state, policy=self.policy)
@@ -99,7 +101,72 @@ class MultiAgentRuntime:
             task = asyncio.create_task(agent.run_loop())
             self._tasks.append(task)
 
+        # Start the governed execution loop
+        exec_task = asyncio.create_task(self._governed_execution_loop())
+        self._tasks.append(exec_task)
+
+    async def _governed_execution_loop(self) -> None:
+        """Global capital allocator applied at the execution choke point.
+        
+        Processes intents from the queue, applies allocator, and routes to execution.
+        This is the single source of truth for position sizing.
+        """
+        while not self._stop:
+            if not self.state.trading_enabled:
+                await asyncio.sleep(0.25)
+                continue
+
+            # Drain intents (micro-batching)
+            intents = self.state.drain_intents(max_n=100)
+            if not intents:
+                await asyncio.sleep(0.25)
+                continue
+
+            for intent in intents:
+                # Basic eligibility check: ensure required fields exist
+                if not intent.get("symbol") or intent.get("qty", 0.0) == 0.0:
+                    logger.debug("ExecutionAgent: skipping invalid intent %s", intent)
+                    continue
+
+                # Apply global capital allocator (choke point)
+                alloc = compute_risk_multiplier(self.state, intent, AllocatorConfig())
+                intent["qty"] = float(intent.get("qty", 0.0)) * float(alloc.multiplier)
+                intent.setdefault("meta", {})["allocator"] = alloc.reasons
+
+                # Skip if allocator reduced qty to zero or below
+                if float(intent.get("qty", 0.0)) <= 0.0:
+                    logger.debug(
+                        "ExecutionAgent: allocator blocked intent %s (mult=%.3f)",
+                        intent.get("symbol"),
+                        alloc.multiplier,
+                    )
+                    continue
+
+                # Risk policy check (if policy engine available)
+                policy_decision = self.policy.evaluate(self.state)
+                if not policy_decision.can_trade:
+                    logger.debug(
+                        "ExecutionAgent: policy blocked intent %s: %s",
+                        intent.get("symbol"),
+                        "; ".join(policy_decision.reasons),
+                    )
+                    continue
+
+                # Intent is approved - log for now (actual execution happens in ExecutionAgent)
+                logger.info(
+                    "ExecutionAgent: approved intent %s qty=%.6f (alloc_mult=%.3f)",
+                    intent.get("symbol"),
+                    intent.get("qty"),
+                    alloc.multiplier,
+                )
+                # Store approved intent in meta for ExecutionAgent to pick up
+                # or route directly to execution if needed
+                approved_intents = self.state.meta.get("approved_intents", [])
+                approved_intents.append(intent)
+                self.state.meta["approved_intents"] = approved_intents[-10:]  # Keep last 10
+
     async def stop(self) -> None:
+        self._stop = True
         for a in self.agents:
             a.stop()
         for t in self._tasks:

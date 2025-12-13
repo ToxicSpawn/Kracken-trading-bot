@@ -1,7 +1,8 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import Dict, Any, Optional
+from typing import Dict, Any, Optional, List
+from collections import deque
 
 from core.loss_cluster import LossClusterTracker
 
@@ -54,6 +55,7 @@ class GlobalState:
     trading_enabled: bool = True
     mode: str = "paper"
     meta: Dict[str, Any] = field(default_factory=dict)
+    _intent_queue: deque = field(default_factory=deque, init=False)
 
     def loss_cluster(self) -> LossClusterTracker:
         lc = self.meta.get("loss_cluster")
@@ -72,3 +74,15 @@ class GlobalState:
         if ts_iso:
             self.meta["last_trade_ts"] = ts_iso
         self.get_loss_cluster().record_outcome(float(pnl))
+
+    def add_intent(self, intent: Dict[str, Any]) -> None:
+        """Add a trading intent to the queue."""
+        self._intent_queue.append(intent)
+
+    def drain_intents(self, max_n: int = 100) -> List[Dict[str, Any]]:
+        """Drain up to max_n intents from the queue."""
+        intents = []
+        for _ in range(min(max_n, len(self._intent_queue))):
+            if self._intent_queue:
+                intents.append(self._intent_queue.popleft())
+        return intents
