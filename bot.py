@@ -2,6 +2,10 @@ import asyncio
 import logging
 import os
 from logging.handlers import RotatingFileHandler
+from dotenv import load_dotenv
+
+# Load .env file at startup
+load_dotenv()
 
 from core.app import main
 
