@@ -1,0 +1,56 @@
+version: "3.8"
+
+services:
+  kracken:
+    build: .
+    container_name: kracken_bot
+    environment:
+      - PYTHONUNBUFFERED=1
+    volumes:
+      - ./config.json:/app/config.json
+      - ./data:/app/data
+      - ./logs:/app/logs
+    restart: unless-stopped
+    networks:
+      - kracken_network
+
+  postgres:
+    image: postgres:13
+    container_name: kracken_postgres
+    environment:
+      POSTGRES_USER: kracken
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-kracken_password}
+      POSTGRES_DB: kracken
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - kracken_network
+
+  grafana:
+    image: grafana/grafana
+    container_name: kracken_grafana
+    ports:
+      - "3000:3000"
+    volumes:
+      - grafana_data:/var/lib/grafana
+    networks:
+      - kracken_network
+
+  redis:
+    image: redis:6
+    container_name: kracken_redis
+    ports:
+      - "6379:6379"
+    networks:
+      - kracken_network
+
+volumes:
+  postgres_data:
+  grafana_data:
+
+networks:
+  kracken_network:
+    driver: bridge
+

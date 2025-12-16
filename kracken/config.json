@@ -1,0 +1,102 @@
+{
+  "exchanges": {
+    "binance": {
+      "api_key": "your_binance_api_key",
+      "secret": "your_binance_secret_key",
+      "enabled": true
+    },
+    "kraken": {
+      "api_key": "your_kraken_api_key",
+      "secret": "your_kraken_secret_key",
+      "enabled": false
+    }
+  },
+  "strategies": {
+    "ml": {
+      "enabled": true,
+      "lstm": {
+        "enabled": true,
+        "symbols": ["BTC/USDT", "ETH/USDT"],
+        "sequence_length": 60
+      },
+      "random_forest": {
+        "enabled": true,
+        "symbols": ["BTC/USDT", "ETH/USDT"]
+      }
+    },
+    "arbitrage": {
+      "enabled": true,
+      "triangular": {
+        "enabled": true,
+        "min_profit_pct": 0.3
+      },
+      "market_making": {
+        "enabled": true,
+        "exchanges": ["binance"],
+        "symbol": "BTC/USDT",
+        "spread_pct": 0.1,
+        "order_size": 0.01,
+        "order_refresh_time": 30
+      }
+    },
+    "quantum": {
+      "enabled": false,
+      "risk_factor": 0.5,
+      "budget": 1
+    }
+  },
+  "risk": {
+    "position_sizing": "kelly",
+    "kelly": {
+      "win_rate": 0.55,
+      "risk_reward_ratio": 2,
+      "max_position_pct": 0.02
+    },
+    "volatility": {
+      "atr_multiplier": 3,
+      "max_position_pct": 0.02
+    },
+    "fallback": {
+      "max_position_pct": 0.01
+    },
+    "stop_loss": {
+      "atr_multiplier": 3,
+      "trail_pct": 0.01,
+      "min_stop_distance": 0.0001
+    },
+    "time_exit": {
+      "max_hold_time": 86400
+    },
+    "black_swan": {
+      "max_drawdown_pct": 0.1,
+      "max_volatility_multiplier": 3
+    }
+  },
+  "backtesting": {
+    "initial_balance": 10000,
+    "commission": 0.001,
+    "slippage": 0.0005,
+    "monte_carlo": {
+      "n_simulations": 1000,
+      "n_days": 365
+    },
+    "walk_forward": {
+      "train_window": 365,
+      "test_window": 90,
+      "optimization_metric": "Sharpe Ratio"
+    }
+  },
+  "database": {
+    "host": "localhost",
+    "name": "kracken",
+    "user": "kracken",
+    "password": "your_database_password",
+    "port": 5432
+  },
+  "telegram": {
+    "enabled": false,
+    "token": "your_telegram_bot_token",
+    "chat_id": "your_chat_id"
+  }
+}
+

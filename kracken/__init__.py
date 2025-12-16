@@ -1,0 +1,2 @@
+"""Kracken trading bot package."""
+
