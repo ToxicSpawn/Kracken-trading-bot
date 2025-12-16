@@ -1,7 +1,7 @@
-"""Performance metrics calculation."""
+"""Performance metrics calculation and tracking."""
 import pandas as pd
 import numpy as np
-from typing import Dict, List
+from typing import Dict, List, Optional
 
 def calculate_performance_metrics(trades: List[Dict], equity_curve: pd.DataFrame, 
                                   initial_balance: float) -> Dict:
@@ -67,3 +67,19 @@ def calculate_performance_metrics(trades: List[Dict], equity_curve: pd.DataFrame
         "Final Balance": final_balance
     }
 
+
+class PerformanceTracker:
+    """Tracks performance for individual strategies."""
+    
+    def __init__(self, config: Dict, strategy_name: str):
+        self.config = config
+        self.strategy_name = strategy_name
+        self.metrics = {}
+    
+    def update(self, metrics: Dict):
+        """Update performance metrics."""
+        self.metrics = metrics
+    
+    def get_metrics(self) -> Dict:
+        """Get current performance metrics."""
+        return self.metrics

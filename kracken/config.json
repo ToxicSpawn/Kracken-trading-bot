@@ -3,7 +3,8 @@
     "binance": {
       "api_key": "your_binance_api_key",
       "secret": "your_binance_secret_key",
-      "enabled": true
+      "enabled": true,
+      "colocation_url": "https://api.binance.com"
     },
     "kraken": {
       "api_key": "your_kraken_api_key",
@@ -46,34 +47,47 @@
     }
   },
   "risk": {
+    "initial_balance": 1500,
     "position_sizing": "kelly",
+    "max_total_risk_pct": 5,
+    "max_drawdown": 0.1,
+    "max_daily_loss": 50,
     "kelly": {
       "win_rate": 0.55,
       "risk_reward_ratio": 2,
-      "max_position_pct": 0.02
-    },
-    "volatility": {
-      "atr_multiplier": 3,
-      "max_position_pct": 0.02
-    },
-    "fallback": {
       "max_position_pct": 0.01
     },
+    "volatility": {
+      "atr_multiplier": 2,
+      "max_position_pct": 0.01
+    },
+    "fallback": {
+      "max_position_pct": 0.005
+    },
     "stop_loss": {
-      "atr_multiplier": 3,
-      "trail_pct": 0.01,
+      "atr_multiplier": 2,
+      "trail_pct": 0.005,
       "min_stop_distance": 0.0001
     },
     "time_exit": {
-      "max_hold_time": 86400
+      "max_hold_time": 43200
     },
     "black_swan": {
-      "max_drawdown_pct": 0.1,
-      "max_volatility_multiplier": 3
+      "max_drawdown_pct": 0.05,
+      "max_volatility_multiplier": 2.5
+    },
+    "correlation": {
+      "threshold": 0.8,
+      "update_frequency": 3600
+    },
+    "liquidity": {
+      "max_spread_pct": 0.5,
+      "min_liquidity_score": 1000,
+      "update_frequency": 60
     }
   },
   "backtesting": {
-    "initial_balance": 10000,
+    "initial_balance": 1500,
     "commission": 0.001,
     "slippage": 0.0005,
     "monte_carlo": {

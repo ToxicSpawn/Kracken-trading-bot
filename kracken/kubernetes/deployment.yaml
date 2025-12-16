@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kracken-bot
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: kracken-bot
+  template:
+    metadata:
+      labels:
+        app: kracken-bot
+    spec:
+      containers:
+      - name: kracken-bot
+        image: kracken-bot:latest
+        env:
+        - name: PYTHONUNBUFFERED
+          value: "1"
+        volumeMounts:
+        - name: config-volume
+          mountPath: /app/config.json
+          subPath: config.json
+        resources:
+          limits:
+            cpu: "2"
+            memory: "4Gi"
+          requests:
+            cpu: "1"
+            memory: "2Gi"
+      volumes:
+      - name: config-volume
+        configMap:
+          name: kracken-config
+

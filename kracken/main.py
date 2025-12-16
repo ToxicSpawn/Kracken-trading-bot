@@ -4,14 +4,14 @@ import sys
 import os
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
-from core.engine import TradingEngine
+from core.engine import UltraLowLatencyEngine
 from utils.logger import logger
 
 async def main():
     """Main entry point."""
     try:
-        logger.info("🚀 Starting Kracken Trading Bot")
-        engine = TradingEngine()
+        logger.info("🚀 Starting Kracken Trading Bot - Ultimate Edition")
+        engine = UltraLowLatencyEngine()
         
         # Start the trading engine
         await engine.start()
