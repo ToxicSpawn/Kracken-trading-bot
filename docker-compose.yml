@@ -1,40 +1,14 @@
-version: '3.8'
+version: "3.9"
 
 services:
-  inference-server:
+  bot:
     build: .
-    ports:
-      - "8000:8000"  # FastAPI inference server
-      - "7860:7860"  # Gradio UI
-    environment:
-      - LLM_MODEL_NAME=${LLM_MODEL_NAME:-mistralai/Mistral-7B-v0.1}
-      - LLM_MODEL_PATH=${LLM_MODEL_PATH:-}
-      - RAG_PERSIST_DIR=/app/rag_store
-      - REDIS_HOST=redis
-      - REDIS_PORT=6379
-      - USE_WANDB=${USE_WANDB:-false}
-      - USE_PROMETHEUS=true
+    env_file: .env
     volumes:
-      - ./models:/app/models
-      - ./rag_store:/app/rag_store
+      - ./data:/app/data
       - ./logs:/app/logs
     depends_on:
-      - redis
-    deploy:
-      resources:
-        reservations:
-          devices:
-            - driver: nvidia
-              count: 1
-              capabilities: [gpu]
-    restart: unless-stopped
-
-  redis:
-    image: redis:7-alpine
-    ports:
-      - "6379:6379"
-    volumes:
-      - redis_data:/data
+      - prometheus
     restart: unless-stopped
 
   prometheus:
@@ -55,14 +29,14 @@ services:
       - "3000:3000"
     environment:
       - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_INSTALL_PLUGINS=
     volumes:
       - grafana_data:/var/lib/grafana
+      - ./grafana/provisioning:/etc/grafana/provisioning
     depends_on:
       - prometheus
     restart: unless-stopped
 
 volumes:
-  redis_data:
   prometheus_data:
   grafana_data:
-

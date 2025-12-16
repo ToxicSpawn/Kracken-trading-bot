@@ -1,100 +1,132 @@
-Kraken ML Bot – v200E (Complete Dry-Run Edition)
-===============================================
+# Kraken DCA Bot – Production Edition
 
-This is the **v200E** version of the Kraken ML bot. It extends v180E with:
+A production-grade Kraken DCA (Dollar Cost Averaging) bot with full monitoring, testing, and deployment setup.
 
-- Multi-agent architecture (market, short/mid/long, risk, execution, portfolio, meta)
-- Multi-horizon RSI strategy (5m / 15m / 1h)
-- Trend & volatility scoring (TrendVolStrategy)
-- Volatility-aware sizing in the execution agent
-- PolicyEngine with daily loss guardrail, per-symbol loss caps, and drawdown circuit breaker
-- Telegram alerts (signals + daily PnL)
-- Prometheus metrics exporter
-- Data-quality monitor for market feeds (Prometheus gauges + Telegram gap/staleness alerts)
-- Hot-reload watcher for policy/account configs (no restart needed for threshold tweaks)
-- File-based rotating logs
-- FastAPI dashboard for live state
-- systemd service + helper scripts
-- Regime-aware microstructure overlays (liquidity/volatility/slippage) for sizing + guardrails
+## Features
 
-> Default mode is **DRY RUN / paper**. Only switch to `BOT_MODE=live` after testing.
+- ✅ **Env-var configuration**, no secrets in repo
+- ✅ **Monotonic nonce**, automatic retry, rate-limit safe
+- ✅ **Limit or market orders**, configurable spread
+- ✅ **SQLite trade ledger**, real-time Prometheus metrics
+- ✅ **Grafana dashboard** included
+- ✅ **Full dry-run mode**
+- ✅ **Pre-commit hooks** + pytest suite
+- ✅ **Docker Compose** full stack (bot + Prometheus + Grafana)
 
-Quick start (dry run)
----------------------
+## Installation
 
-1. Upload the zip to your server and unzip:
+### Local Development
 
-   unzip kraken_ml_bot_v200E_full.zip -d /opt/kraken_ml_bot_v200E
-   cd /opt/kraken_ml_bot_v200E
+```bash
+# Create virtual environment
+python3 -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
 
-2. Create virtualenv and install dependencies:
+# Install dependencies
+pip install -r requirements.txt
 
-   ./scripts/create_venv.sh
+# Copy and configure environment
+cp .env.example .env
+# Edit .env with your Kraken API keys
 
-   The helper script now defaults to using the preinstalled system packages to
-   avoid network failures in restricted environments. If you need to force
-   dependency downloads, run with `INSTALL_DEPS=1 ./scripts/create_venv.sh`.
-
-3. Configure environment:
-
-   cp .env.example .env
-   nano .env   # fill Kraken keys, Telegram, BOT_MODE=paper
-
-4. Run the bot (dry run):
-
-   ./scripts/run_bot.sh
-
-Optional dashboard
-------------------
-
-In another shell:
-
-   source venv/bin/activate
-   uvicorn dashboard.app:app --host 0.0.0.0 --port 8080
-
-Then open:
-
-   http://YOUR_SERVER_IP:8080/
-   http://YOUR_SERVER_IP:8080/api/state
-
-Prometheus metrics (if enabled in config/metrics.yaml):
-
-   http://YOUR_SERVER_IP:8001/metrics
-
-Data-quality monitoring (config/monitoring.yaml):
-
-   - Enables gap/staleness checks on market data.
-   - Exposes Prometheus gauges `data_feed_gap` and `data_feed_stale` per symbol/timeframe.
-   - Sends Telegram alerts when gaps persist beyond thresholds (rate-limited).
-
-Hot reload for configs (accounts + policies):
-
-   - The bot watches `config/accounts.yaml` and `config/policies.yaml` for changes every 30 seconds.
-   - Risk multipliers, drawdown caps, and policy thresholds update live—no restart required.
-
-Logs are written to:
-
-   logs/bot.log
-
-Microstructure + regime overlays (new)
---------------------------------------
-
-- MarketDataAgent now tags each pair with:
-  - **Regime label:** trending / mean-reverting / sideways / high-volatility.
-  - **Liquidity + slippage heuristics:** derived from recent OHLCV depth/volatility.
-- PolicyEngine uses these overlays to block trading during event blackout hours, extreme vol,
-  thin liquidity, or oversized slippage; ExecutionAgent dynamically resizes or skips orders based on
-  regime and stress multipliers.
-
-Backtesting harness (new)
--------------------------
-
-Run a quick RSI+ML backtest over historical candles to validate policy changes before going live:
-
-```
-source venv/bin/activate
-python scripts/run_backtest.py path/to/ohlcv.csv --symbol XBTUSDT --initial 10000 --fee-bps 10 --slippage-bps 5
+# Run in dry-run mode
+python -m src.main --dry-run
 ```
 
-The CSV must include columns `timestamp, open, high, low, close, volume`. The backtester reuses the
-production strategy and reports trade count, win rate, total return, and max drawdown.
+### Development Setup
+
+```bash
+# Install dev dependencies
+pip install -r requirements-dev.txt
+
+# Install pre-commit hooks
+pre-commit install
+
+# Run tests
+pytest -q
+```
+
+## Docker Deployment
+
+```bash
+# Build and start all services
+docker-compose up -d
+
+# View logs
+docker-compose logs -f bot
+
+# Stop services
+docker-compose down
+```
+
+### Access Services
+
+- **Grafana**: http://localhost:3000 (admin/admin)
+- **Prometheus**: http://localhost:9090
+- **Bot Metrics**: http://localhost:8000/metrics
+
+## Configuration
+
+All configuration is done via environment variables (see `.env.example`):
+
+- `KRAKEN_API_KEY`: Your Kraken API key
+- `KRAKEN_PRIVATE_KEY`: Your Kraken private key (base64 encoded)
+- `KRAKEN_PAIR`: Trading pair (default: XBTUSD)
+- `ORDER_TYPE`: Order type - "limit" or "market"
+- `SPREAD_PCT`: Spread percentage for limit orders (default: 0.1)
+- `QUOTE_AMOUNT`: Amount to invest per order
+- `MAX_OPEN_ORDERS`: Maximum number of open buy orders
+- `CHECK_INTERVAL`: Interval between checks in seconds
+- `DRY_RUN`: Enable dry-run mode (true/false)
+
+## Project Structure
+
+```
+.
+├── src/
+│   ├── __init__.py
+│   ├── config.py          # Pydantic settings
+│   ├── nonce.py           # Monotonic nonce
+│   ├── kraken_api.py      # API wrapper with retry
+│   ├── strategy.py        # DCA strategy
+│   ├── db.py              # SQLite ledger
+│   ├── metrics.py          # Prometheus metrics
+│   ├── logger.py           # Structured logging
+│   └── main.py            # Entry point
+├── tests/
+│   ├── test_strategy.py
+│   └── test_kraken_api.py
+├── data/                  # SQLite database
+├── logs/                  # Log files
+├── grafana/               # Grafana provisioning
+├── docker-compose.yml
+├── Dockerfile
+└── requirements.txt
+```
+
+## Testing
+
+```bash
+# Run all tests
+pytest
+
+# Run with coverage
+pytest --cov=src --cov-report=html
+
+# Run specific test
+pytest tests/test_strategy.py
+```
+
+## Pre-commit Hooks
+
+```bash
+# Run manually
+pre-commit run --all-files
+
+# Auto-run on commit (after install)
+git commit -m "your message"
+```
+
+## License
+
+MIT

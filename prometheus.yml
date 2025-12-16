@@ -3,8 +3,7 @@ global:
   evaluation_interval: 15s
 
 scrape_configs:
-  - job_name: 'llm-inference'
+  - job_name: 'kraken-bot'
     static_configs:
-      - targets: ['inference-server:8001']
+      - targets: ['bot:8000']
     metrics_path: '/metrics'
-

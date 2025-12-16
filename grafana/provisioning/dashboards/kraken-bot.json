@@ -1,0 +1,33 @@
+{
+  "dashboard": {
+    "title": "Kraken DCA Bot",
+    "panels": [
+      {
+        "id": 1,
+        "title": "Orders Placed",
+        "type": "stat",
+        "targets": [
+          {
+            "expr": "bot_orders_placed_total",
+            "legendFormat": "Total Orders"
+          }
+        ],
+        "gridPos": {"h": 8, "w": 12, "x": 0, "y": 0}
+      },
+      {
+        "id": 2,
+        "title": "PnL (USD)",
+        "type": "stat",
+        "targets": [
+          {
+            "expr": "bot_pnl_usd",
+            "legendFormat": "PnL"
+          }
+        ],
+        "gridPos": {"h": 8, "w": 12, "x": 12, "y": 0}
+      }
+    ],
+    "refresh": "10s"
+  }
+}
+
