@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: neural-kraken-ai
+  namespace: neural-kraken
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: neural-kraken-ai
+  template:
+    metadata:
+      labels:
+        app: neural-kraken-ai
+    spec:
+      containers:
+      - name: python-ai
+        image: your-registry/neural-kraken-ai:latest
+        env:
+        - name: KAFKA_BROKERS
+          value: "kafka:9092"
+        - name: MODEL_PATH
+          value: "/models/momentum_lstm"
+        - name: LOG_LEVEL
+          value: "INFO"
+        resources:
+          requests:
+            memory: "2Gi"
+            cpu: "1"
+          limits:
+            memory: "4Gi"
+            cpu: "2"
+        volumeMounts:
+        - name: models
+          mountPath: /models
+      volumes:
+      - name: models
+        persistentVolumeClaim:
+          claimName: models-pvc
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: neural-kraken-ai
+  namespace: neural-kraken
+spec:
+  ports:
+  - port: 8080
+    targetPort: 8080
+  selector:
+    app: neural-kraken-ai
+

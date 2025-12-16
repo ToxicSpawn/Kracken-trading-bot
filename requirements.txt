@@ -58,5 +58,46 @@ redis>=5.0.0
 # Rate limiting
 slowapi>=0.1.9
 
+# Retry and error handling
+tenacity>=8.2.0
+
+# Security
+cryptography>=41.0.0
+
+# WebSocket support
+websockets>=12.0
+
+# Backtesting
+backtrader>=1.9.78
+vectorbt>=0.25.0
+
+# Optimization
+optuna>=3.4.0
+
+# Enhanced logging
+structlog>=23.2.0
+
+# Kafka for real-time data
+kafka-python>=2.0.2
+
+# TensorFlow for ML models
+tensorflow>=2.12.0
+
+# Web3 for on-chain data
+web3>=6.0.0
+
+# Twitter API
+tweepy>=4.14.0
+
+# News API
+newsapi-python>=0.2.6
+
 # Additional utilities
 requests>=2.31.0
+
+# Prometheus metrics
+prometheus-client>=0.19.0
+
+# Plotting (for backtesting visualizations)
+matplotlib>=3.7.0
+seaborn>=0.12.0

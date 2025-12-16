@@ -1,0 +1,75 @@
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: trading-alerts
+  namespace: neural-kraken
+  labels:
+    prometheus: k8s
+    role: alert-rules
+spec:
+  groups:
+  - name: trading-alerts
+    rules:
+    - alert: HighProcessingLatency
+      expr: histogram_quantile(0.95, sum(rate(processing_latency_seconds_bucket[5m])) by (le)) > 0.5
+      for: 5m
+      labels:
+        severity: warning
+      annotations:
+        summary: "High processing latency detected"
+        description: "Processing latency is {{ $value }}s (95th percentile) for more than 5 minutes"
+
+    - alert: HighOrderExecutionLatency
+      expr: histogram_quantile(0.95, sum(rate(order_execution_latency_seconds_bucket[5m])) by (le)) > 2
+      for: 5m
+      labels:
+        severity: critical
+      annotations:
+        summary: "High order execution latency detected"
+        description: "Order execution latency is {{ $value }}s (95th percentile) for more than 5 minutes"
+
+    - alert: HighOrderErrorRate
+      expr: rate(order_errors_total[5m]) / rate(orders_placed_total[5m]) > 0.1
+      for: 5m
+      labels:
+        severity: critical
+      annotations:
+        summary: "High order error rate detected"
+        description: "Order error rate is {{ $value }} for more than 5 minutes"
+
+    - alert: NoMarketData
+      expr: rate(ticker_messages_total[5m]) == 0
+      for: 5m
+      labels:
+        severity: critical
+      annotations:
+        summary: "No market data received"
+        description: "No ticker messages received for more than 5 minutes"
+
+    - alert: PortfolioDrawdown
+      expr: portfolio_return_pct < -10
+      for: 15m
+      labels:
+        severity: critical
+      annotations:
+        summary: "Significant portfolio drawdown"
+        description: "Portfolio return is {{ $value }}% for more than 15 minutes"
+
+    - alert: HighValueAtRisk
+      expr: portfolio_var > 1000
+      for: 15m
+      labels:
+        severity: warning
+      annotations:
+        summary: "High Value at Risk"
+        description: "Portfolio VaR is {{ $value }} for more than 15 minutes"
+
+    - alert: NoArbitrageOpportunities
+      expr: rate(arbitrage_opportunities_total[1h]) == 0
+      for: 1h
+      labels:
+        severity: warning
+      annotations:
+        summary: "No arbitrage opportunities detected"
+        description: "No arbitrage opportunities detected for more than 1 hour"
+
