@@ -1,5 +1,4 @@
 """Tests for backtesting."""
-import pytest
 
 def test_backtest_engine():
     """Test backtesting engine."""

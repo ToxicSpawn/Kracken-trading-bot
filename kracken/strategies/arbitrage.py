@@ -1,9 +1,7 @@
 """Arbitrage & market-making strategies."""
-import numpy as np
 import time
 from typing import Dict, List, Optional
 from strategies.base_strategy import BaseStrategy
-from utils.logger import logger
 
 class TriangularArbitrageStrategy(BaseStrategy):
     """Triangular arbitrage strategy."""

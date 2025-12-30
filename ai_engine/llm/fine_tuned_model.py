@@ -2,10 +2,9 @@
 Fine-tuned LLM module using LoRA for efficient adaptation.
 Supports Mistral-7B, Llama-3-8B, and Phi-3 models.
 """
-import os
 import logging
 import torch
-from typing import Optional, Dict, Any, List
+from typing import Optional, Dict, Any
 from pathlib import Path
 
 try:

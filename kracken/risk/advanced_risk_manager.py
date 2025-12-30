@@ -1,5 +1,5 @@
 """Advanced risk manager with correlation and liquidity checks."""
-from typing import Dict, Optional, List
+from typing import Dict
 from risk.risk_manager import RiskManager
 from risk.correlation import CorrelationManager
 from risk.liquidity import LiquidityManager

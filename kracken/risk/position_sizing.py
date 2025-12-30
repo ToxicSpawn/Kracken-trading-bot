@@ -1,5 +1,4 @@
 """Position sizing using Kelly Criterion and volatility-based methods."""
-import numpy as np
 from typing import Dict
 from utils.logger import logger
 

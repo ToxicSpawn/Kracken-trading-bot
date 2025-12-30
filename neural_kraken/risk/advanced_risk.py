@@ -374,7 +374,7 @@ class PortfolioOptimizer:
     def _risk_parity_optimization(self, returns: pd.DataFrame) -> Dict[str, float]:
         """Risk parity optimization."""
         cov_matrix = returns.cov()
-        n = len(cov_matrix)
+        # n = len(cov_matrix)  # Not currently used in simplified version
 
         # Risk parity: equal risk contribution
         # Simplified version - use inverse volatility weighting
