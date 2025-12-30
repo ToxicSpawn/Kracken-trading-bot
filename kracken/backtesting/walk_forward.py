@@ -1,6 +1,6 @@
 """Walk-forward optimization."""
 import pandas as pd
-from typing import Dict, List
+from typing import Dict
 from utils.logger import logger
 
 class WalkForwardOptimizer:
@@ -44,7 +44,7 @@ class WalkForwardOptimizer:
             # Simple optimization: test different parameter combinations
             # In a real implementation, you would use a proper optimization library like Optuna
             best_params = strategy_params.copy()
-            best_metric = 0
+            # best_metric = 0  # TODO: Implement metric tracking
             
             # Test a few parameter combinations (simplified)
             for param_name, param_values in strategy_params.items():

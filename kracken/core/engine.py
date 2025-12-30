@@ -210,11 +210,9 @@ class UltraLowLatencyEngine:
             
             # Get the exchange for this symbol
             exchange = None
-            exchange_id = None
             for ex_id, ex in self.exchanges.items():
                 if symbol in ex.symbols:
                     exchange = ex
-                    exchange_id = ex_id
                     break
             
             if not exchange:
@@ -245,19 +243,17 @@ class UltraLowLatencyEngine:
             
             # Execute the trade
             if action == "buy":
-                order = await exchange.create_market_buy_order(symbol, position_size)
+                _order = await exchange.create_market_buy_order(symbol, position_size)
             elif action == "sell":
-                order = await exchange.create_market_sell_order(symbol, position_size)
+                _order = await exchange.create_market_sell_order(symbol, position_size)
             elif action == "long":
                 # For statistical arbitrage
-                order1 = await exchange.create_market_buy_order(signal.get("symbol1", symbol), position_size)
-                order2 = await exchange.create_market_sell_order(signal.get("symbol2", symbol), position_size * price)
-                order = {"order1": order1, "order2": order2}
+                _order1 = await exchange.create_market_buy_order(signal.get("symbol1", symbol), position_size)
+                _order2 = await exchange.create_market_sell_order(signal.get("symbol2", symbol), position_size * price)
             elif action == "short":
                 # For statistical arbitrage
-                order1 = await exchange.create_market_sell_order(signal.get("symbol1", symbol), position_size)
-                order2 = await exchange.create_market_buy_order(signal.get("symbol2", symbol), position_size * price)
-                order = {"order1": order1, "order2": order2}
+                _order1 = await exchange.create_market_sell_order(signal.get("symbol1", symbol), position_size)
+                _order2 = await exchange.create_market_buy_order(signal.get("symbol2", symbol), position_size * price)
             else:
                 logger.error(f"Unknown action: {action}")
                 return False

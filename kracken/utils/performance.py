@@ -1,7 +1,7 @@
 """Performance metrics calculation and tracking."""
 import pandas as pd
 import numpy as np
-from typing import Dict, List, Optional
+from typing import Dict, List
 
 def calculate_performance_metrics(trades: List[Dict], equity_curve: pd.DataFrame, 
                                   initial_balance: float) -> Dict:

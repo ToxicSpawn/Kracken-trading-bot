@@ -1,7 +1,6 @@
 """Unified exchange interface."""
-import asyncio
 import ccxt.pro
-from typing import Dict, Optional
+from typing import Dict
 from utils.logger import logger
 
 class ExchangeManager:

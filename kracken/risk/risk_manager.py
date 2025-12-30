@@ -1,5 +1,5 @@
 """Risk manager integration."""
-from typing import Dict, Optional, List
+from typing import Dict
 from risk.position_sizing import KellyCriterion, VolatilityBasedSizing
 from risk.stop_loss import DynamicStopLoss, TimeBasedExit
 from risk.black_swan import BlackSwanProtector

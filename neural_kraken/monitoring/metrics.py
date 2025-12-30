@@ -3,8 +3,7 @@
 from __future__ import annotations
 
 import logging
-from typing import Dict, Optional
-from time import time
+from typing import Optional
 
 try:
     from prometheus_client import Counter, Gauge, Histogram, start_http_server

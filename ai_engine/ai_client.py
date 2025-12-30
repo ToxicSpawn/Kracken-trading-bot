@@ -1,7 +1,7 @@
 import os
 import json
 import logging
-from typing import Any, Dict, List
+from typing import Any, Dict
 
 import openai  # type: ignore
 

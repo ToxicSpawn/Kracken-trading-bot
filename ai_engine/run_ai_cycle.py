@@ -2,9 +2,8 @@
 import logging
 import os
 from datetime import datetime
-from pathlib import Path
 
-from .config import AI_ENGINE_ENABLED, AI_ENGINE_DIR, REPORTS_DIR, CANDIDATES_DIR
+from .config import AI_ENGINE_ENABLED, REPORTS_DIR, CANDIDATES_DIR
 from .code_collector import collect_code_and_logs
 from .ai_client import request_improvements
 from .deploy import save_candidates, apply_candidates, restart_bot_service

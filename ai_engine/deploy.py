@@ -4,7 +4,7 @@ import subprocess
 from pathlib import Path
 from typing import Any, Dict, List
 
-from .config import BASE_DIR, WRITABLE_DIRS, CANDIDATES_DIR, BOT_SERVICE_NAME
+from .config import BASE_DIR, WRITABLE_DIRS, BOT_SERVICE_NAME
 
 logger = logging.getLogger(__name__)
 

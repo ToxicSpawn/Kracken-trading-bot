@@ -1,9 +1,8 @@
-from __future__ import annotations
-
 """Global singleton state holder (Python 3.9 compatible).
 
 This project may be run on Python 3.9 where PEP604 union syntax (X | None) is unsupported.
 """
+from __future__ import annotations
 
 from typing import Optional
 

@@ -2,7 +2,6 @@
 Retrieval-Augmented Generation (RAG) system.
 Uses LangChain + FAISS/ChromaDB for vector storage and hybrid search.
 """
-import os
 import logging
 from typing import List, Dict, Any, Optional
 from pathlib import Path
@@ -163,7 +162,6 @@ class RAGSystem:
         # Create new vectorstore
         if self.vectorstore_type == "faiss":
             # Create empty FAISS index (will be populated when documents are added)
-            from langchain.vectorstores import FAISS
             # We'll create it when we add documents
             self.vectorstore = None
         elif self.vectorstore_type == "chroma":

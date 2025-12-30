@@ -1,5 +1,4 @@
 """Black swan protection and circuit breakers."""
-import numpy as np
 import pandas as pd
 import time
 from typing import Dict, List
@@ -49,7 +48,7 @@ class BlackSwanProtector:
                 current_time = time.time()
                 if current_time - self.last_alert_time > self.alert_cooldown:
                     logger.error(f"🚨 BLACK SWAN: Volatility spike {volatility:.4f} > {self.max_volatility_multiplier}x avg")
-                    send_telegram_alert(f"🚨 BLACK SWAN ALERT: Volatility spike detected!")
+                    send_telegram_alert("🚨 BLACK SWAN ALERT: Volatility spike detected!")
                     self.last_alert_time = current_time
                 return True
         except Exception as e:

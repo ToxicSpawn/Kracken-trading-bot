@@ -7,10 +7,11 @@ import hashlib
 import logging
 from typing import Optional, Dict, Any, List
 from pathlib import Path
+from collections import defaultdict
+from datetime import datetime, timedelta
 
-from fastapi import FastAPI, HTTPException, UploadFile, File, Depends
+from fastapi import FastAPI, HTTPException, UploadFile, File
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import StreamingResponse
 from pydantic import BaseModel, Field
 import uvicorn
 import time
@@ -75,8 +76,6 @@ class RAGQueryResponse(BaseModel):
 
 
 # Rate limiting (simple in-memory, can be replaced with slowapi)
-from collections import defaultdict
-from datetime import datetime, timedelta
 _rate_limit_store: Dict[str, List[datetime]] = defaultdict(list)
 _rate_limit_window = timedelta(minutes=1)
 _rate_limit_max_requests = 60

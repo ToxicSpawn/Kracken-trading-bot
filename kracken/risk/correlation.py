@@ -1,5 +1,4 @@
 """Correlation management for risk control."""
-import numpy as np
 import pandas as pd
 from typing import Dict, List
 from utils.logger import logger

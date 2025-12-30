@@ -1,5 +1,4 @@
 """Order execution logic."""
-import asyncio
 from typing import Dict, Optional
 from utils.logger import logger
 

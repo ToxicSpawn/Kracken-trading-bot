@@ -1,5 +1,3 @@
-from __future__ import annotations
-
 """Live metrics (Prometheus compatible) with safe fallback.
 
 This module is designed to be imported even when `prometheus_client` is not installed.
@@ -10,6 +8,7 @@ Env:
   METRICS_HOST=0.0.0.0
   METRICS_PORT=9109
 """
+from __future__ import annotations
 
 import os
 import logging

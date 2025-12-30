@@ -1,7 +1,6 @@
 """Backtesting engine."""
 import pandas as pd
-import numpy as np
-from typing import Dict, List, Optional
+from typing import Dict
 import sys
 import os
 sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))

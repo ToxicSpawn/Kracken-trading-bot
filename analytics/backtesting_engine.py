@@ -9,7 +9,7 @@ from typing import Any, Optional
 import backtrader as bt
 import pandas as pd
 
-from strategies.base import StrategySignal, SignalType
+from strategies.base import SignalType
 
 logger = logging.getLogger(__name__)
 
@@ -190,7 +190,7 @@ class BacktestEngine:
         final_value = cerebro.broker.getvalue()
         sharpe = result.analyzers.sharpe.get_analysis().get("sharperatio", 0.0)
         drawdown = result.analyzers.drawdown.get_analysis()
-        returns = result.analyzers.returns.get_analysis()
+        # returns = result.analyzers.returns.get_analysis()  # Not currently used
         trades = result.analyzers.trades.get_analysis()
 
         return {

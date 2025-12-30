@@ -3,16 +3,15 @@
 from __future__ import annotations
 
 import logging
-from typing import Dict, List, Optional, Callable, Tuple
+from typing import Dict, List, Optional, Callable
 from dataclasses import dataclass, field
-from datetime import datetime, timedelta
 
 import pandas as pd
 import numpy as np
 
 try:
-    import matplotlib.pyplot as plt
-    import seaborn as sns
+    import matplotlib.pyplot  # noqa: F401
+    import seaborn  # noqa: F401
     PLOTTING_AVAILABLE = True
 except ImportError:
     PLOTTING_AVAILABLE = False

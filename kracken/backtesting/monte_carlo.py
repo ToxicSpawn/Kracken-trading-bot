@@ -54,7 +54,7 @@ class MonteCarloSimulator:
             }
         }
         
-        logger.info(f"Monte Carlo Results:")
+        logger.info("Monte Carlo Results:")
         logger.info(f"- Median final balance: ${results['metrics']['median_final_balance']:,.2f}")
         logger.info(f"- Probability of loss: {results['metrics']['probability_of_loss']:.2f}%")
         logger.info(f"- Median CAGR: {results['metrics']['median_cagr']:.2f}%")
